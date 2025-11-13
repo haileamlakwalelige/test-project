@@ -6,6 +6,7 @@ import { Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const STORAGE_KEY = '@products';
+const TRANSACTIONS_KEY = '@transactions';
 
 export default function AddProducts() {
   const [productName, setProductName] = useState('');
@@ -84,6 +85,24 @@ export default function AddProducts() {
 
       // Save updated array to storage
       await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(updatedProducts));
+
+      // Create transaction record
+      const transaction = {
+        id: Date.now().toString(),
+        type: 'product_added',
+        productId: newProduct.id,
+        productName: newProduct.name,
+        sku: newProduct.sku,
+        price: newProduct.price,
+        quantity: newProduct.quantity,
+        timestamp: new Date().toISOString(),
+      };
+
+      // Save transaction to storage
+      const existingTransactionsJson = await AsyncStorage.getItem(TRANSACTIONS_KEY);
+      const existingTransactions = existingTransactionsJson ? JSON.parse(existingTransactionsJson) : [];
+      const updatedTransactions = [transaction, ...existingTransactions];
+      await AsyncStorage.setItem(TRANSACTIONS_KEY, JSON.stringify(updatedTransactions));
 
       // Clear form
       setProductName('');

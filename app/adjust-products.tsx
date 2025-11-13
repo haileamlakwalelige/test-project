@@ -6,6 +6,7 @@ import React, { useEffect, useState } from 'react';
 import { FlatList, Modal, Pressable, SafeAreaView, ScrollView, Text, TextInput, View } from 'react-native';
 
 const STORAGE_KEY = '@products';
+const TRANSACTIONS_KEY = '@transactions';
 
 interface Product {
   id: string;
@@ -97,6 +98,26 @@ export default function AdjustProducts() {
             // Save to AsyncStorage
             await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(updatedProducts));
             setProducts(updatedProducts);
+
+            // Create transaction record
+            const transaction = {
+                id: Date.now().toString(),
+                type: 'quantity_adjusted',
+                productId: updatedProducts[productIndex].id,
+                productName: updatedProducts[productIndex].name,
+                sku: updatedProducts[productIndex].sku,
+                adjustmentType: adjustmentType,
+                adjustmentAmount: amount,
+                oldQuantity: currentQuantity,
+                newQuantity: newQuantity,
+                timestamp: new Date().toISOString(),
+            };
+
+            // Save transaction to storage
+            const existingTransactionsJson = await AsyncStorage.getItem(TRANSACTIONS_KEY);
+            const existingTransactions = existingTransactionsJson ? JSON.parse(existingTransactionsJson) : [];
+            const updatedTransactions = [transaction, ...existingTransactions];
+            await AsyncStorage.setItem(TRANSACTIONS_KEY, JSON.stringify(updatedTransactions));
 
             // Update selected product to reflect new quantity
             setSelectedProduct(updatedProducts[productIndex]);
@@ -224,9 +245,6 @@ export default function AdjustProducts() {
                   className="bg-white/10 border border-white/20 rounded-xl p-4 mb-2"
                 >
                   <Text className="text-white text-base font-semibold">{item.name}</Text>
-                  <Text className="text-purple-300 text-sm mt-1">
-                    SKU: {item.sku} | Current Qty: {item.quantity}
-                  </Text>
                 </Pressable>
               )}
             />
