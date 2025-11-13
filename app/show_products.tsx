@@ -36,7 +36,8 @@ export default function ShowProducts() {
       const loadedProducts = productsJson ? JSON.parse(productsJson) : [];
       setProducts(loadedProducts);
     } catch (error) {
-      console.error('Error loading products:', error);
+      // console.error('Error loading products:', error);
+      showToast('Failed to load products. Please try again.', 'error');
     } finally {
       setLoading(false);
     }
@@ -107,7 +108,7 @@ export default function ShowProducts() {
       return;
     }
 
-    // Check if SKU is being changed and if new SKU already exists
+    // Check if SKU is being changed and if new SKU already exists (to make sure the SKU is unique)
     const skuLower = editSku.trim().toLowerCase();
     if (skuLower !== editingProduct.sku.toLowerCase()) {
       const skuExists = products.some(
@@ -142,7 +143,7 @@ export default function ShowProducts() {
       setEditQuantity('');
       showToast('Product updated successfully!', 'success');
     } catch (error) {
-      console.error('Error updating product:', error);
+      // console.error('Error updating product:', error);
       showToast('Failed to update product. Please try again.', 'error');
     }
   };
