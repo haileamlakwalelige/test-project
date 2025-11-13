@@ -1,7 +1,7 @@
 # 🚀 Product & User Management App
 
 <div align="center">
-  <img src="./assets/images/welcome.png" alt="Welcome Screen" width="200" height="220">
+  <img src="./assets/images/welcome.png" alt="Welcome Screen" width="300" height="420">
 </div>
 
 A React Native application built with **Expo** and **Tailwind CSS (NativeWind)** for managing products, users, and transactions. This app provides a complete inventory management system with local storage capabilities.
