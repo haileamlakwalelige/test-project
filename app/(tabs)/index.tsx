@@ -58,6 +58,20 @@ export default function HomeScreen() {
                 Add Products
               </Text>
             </Pressable>
+            <Pressable
+              onPress={() => router.push('/adjust-products')}
+              className="bg-transparent rounded-2xl py-5 px-6 mb-4 border-2 border-purple-400"
+              style={({ pressed }) => [
+                {
+                  opacity: pressed ? 0.8 : 1,
+                  transform: [{ scale: pressed ? 0.98 : 1 }],
+                },
+              ]} 
+            >
+              <Text className="text-purple-300 text-lg font-semibold text-center">
+                Adjust Products
+              </Text>
+            </Pressable>
 
             <Pressable
               onPress={() => router.push('/transactions-history' as any)}
