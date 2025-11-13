@@ -61,8 +61,8 @@ export default function TransactionsHistory() {
     <SafeAreaView className="flex-1 bg-slate-900">
       <View className="flex-1 px-6 py-8">
         <View className="mb-6">
-          <Text className="text-white text-4xl font-bold mb-2 text-center">Transactions History</Text>
-          <Text className="text-purple-300 text-lg text-center">
+          <Text className="text-white text-2xl font-bold mb-2 text-center">Transactions History</Text>
+          <Text className="text-purple-300 text-base text-center">
             {transactions.length} {transactions.length === 1 ? 'transaction' : 'transactions'} recorded
           </Text>
         </View>

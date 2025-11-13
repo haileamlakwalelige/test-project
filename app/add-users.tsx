@@ -42,11 +42,7 @@ export default function AddUsers() {
             
             // Show success toast
             showToast('User added successfully!', 'success');
-            
-            console.log('User added:', newUser);
-            console.log('All users:', updatedUsers);
         } catch (error) {
-            console.error('Error saving user:', error);
             showToast('Failed to save user. Please try again.', 'error');
         }
     }
