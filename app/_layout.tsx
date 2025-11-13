@@ -32,6 +32,7 @@ export default function RootLayout() {
         <Stack.Screen name="add-products" options={{ headerShown: false }} />
         <Stack.Screen name="transactions-history" options={{ headerShown: false }} />
         <Stack.Screen name="show_users" options={{ headerShown: false }} />
+        <Stack.Screen name="show_products" options={{ headerShown: false }} />
         <Stack.Screen name="+not-found" />
       </Stack>
       <StatusBar style="auto" />

@@ -6,33 +6,37 @@ import { useEffect, useState } from 'react';
 import { FlatList, Modal, Pressable, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-const STORAGE_KEY = '@users';
+const STORAGE_KEY = '@products';
 
-interface User {
+interface Product {
   id: string;
   name: string;
-  email: string;
+  price: number;
+  sku: string;
+  quantity: number;
   createdAt: string;
 }
 
-export default function ShowUsers() {
-  const [users, setUsers] = useState<User[]>([]);
+export default function ShowProducts() {
+  const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
-  const [editingUser, setEditingUser] = useState<User | null>(null);
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [editName, setEditName] = useState('');
-  const [editEmail, setEditEmail] = useState('');
+  const [editPrice, setEditPrice] = useState('');
+  const [editSku, setEditSku] = useState('');
+  const [editQuantity, setEditQuantity] = useState('');
 
   useEffect(() => {
-    loadUsers();
+    loadProducts();
   }, []);
 
-  const loadUsers = async () => {
+  const loadProducts = async () => {
     try {
-      const usersJson = await AsyncStorage.getItem(STORAGE_KEY);
-      const loadedUsers = usersJson ? JSON.parse(usersJson) : [];
-      setUsers(loadedUsers);
+      const productsJson = await AsyncStorage.getItem(STORAGE_KEY);
+      const loadedProducts = productsJson ? JSON.parse(productsJson) : [];
+      setProducts(loadedProducts);
     } catch (error) {
-      console.error('Error loading users:', error);
+      console.error('Error loading products:', error);
     } finally {
       setLoading(false);
     }
@@ -53,70 +57,129 @@ export default function ShowUsers() {
     }
   };
 
-  const handleEdit = (user: User) => {
-    setEditingUser(user);
-    setEditName(user.name);
-    setEditEmail(user.email);
+  const handleEdit = (product: Product) => {
+    setEditingProduct(product);
+    setEditName(product.name);
+    setEditPrice(product.price.toString());
+    setEditSku(product.sku);
+    setEditQuantity(product.quantity.toString());
+  };
+
+  // Handle price input - allow only numbers and one decimal point
+  const handleEditPriceChange = (text: string) => {
+    // Remove any non-numeric characters except decimal point
+    const cleaned = text.replace(/[^0-9.]/g, '');
+    // Ensure only one decimal point
+    const parts = cleaned.split('.');
+    if (parts.length > 2) {
+      setEditPrice(parts[0] + '.' + parts.slice(1).join(''));
+    } else {
+      setEditPrice(cleaned);
+    }
+  };
+
+  // Handle quantity input - allow only whole numbers
+  const handleEditQuantityChange = (text: string) => {
+    // Remove any non-numeric characters
+    const cleaned = text.replace(/[^0-9]/g, '');
+    setEditQuantity(cleaned);
   };
 
   const handleSaveEdit = async () => {
-    if (!editingUser) return;
+    if (!editingProduct) return;
 
-    if (!editName.trim() || !editEmail.trim()) {
-      showToast('Please fill in all fields', 'error');
+    if (!editName.trim() || !editPrice.trim() || !editSku.trim() || !editQuantity.trim()) {
+      showToast('Please fill in all required fields', 'error');
       return;
     }
 
-    try {
-      const updatedUsers = users.map((user) =>
-        user.id === editingUser.id
-          ? { ...user, name: editName.trim(), email: editEmail.trim() }
-          : user
+    // Validate price is a valid decimal number
+    const priceNum = parseFloat(editPrice);
+    if (isNaN(priceNum) || priceNum <= 0 || !isFinite(priceNum)) {
+      showToast('Please enter a valid price (numbers only, decimals allowed)', 'error');
+      return;
+    }
+
+    // Validate quantity is a valid whole number
+    const quantityNum = parseInt(editQuantity, 10);
+    if (isNaN(quantityNum) || quantityNum <= 0 || !Number.isInteger(quantityNum)) {
+      showToast('Please enter a valid quantity (whole numbers only)', 'error');
+      return;
+    }
+
+    // Check if SKU is being changed and if new SKU already exists
+    const skuLower = editSku.trim().toLowerCase();
+    if (skuLower !== editingProduct.sku.toLowerCase()) {
+      const skuExists = products.some(
+        (product) => product.id !== editingProduct.id && product.sku?.toLowerCase() === skuLower
       );
 
-      await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(updatedUsers));
-      setUsers(updatedUsers);
-      setEditingUser(null);
+      if (skuExists) {
+        showToast('SKU already exists. Please use a unique SKU.', 'error');
+        return;
+      }
+    }
+
+    try {
+      const updatedProducts = products.map((product) =>
+        product.id === editingProduct.id
+          ? {
+              ...product,
+              name: editName.trim(),
+              price: priceNum,
+              sku: editSku.trim(),
+              quantity: quantityNum,
+            }
+          : product
+      );
+
+      await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(updatedProducts));
+      setProducts(updatedProducts);
+      setEditingProduct(null);
       setEditName('');
-      setEditEmail('');
-      showToast('User updated successfully!', 'success');
+      setEditPrice('');
+      setEditSku('');
+      setEditQuantity('');
+      showToast('Product updated successfully!', 'success');
     } catch (error) {
-      console.error('Error updating user:', error);
-      showToast('Failed to update user. Please try again.', 'error');
+      console.error('Error updating product:', error);
+      showToast('Failed to update product. Please try again.', 'error');
     }
   };
 
   const handleCancelEdit = () => {
-    setEditingUser(null);
+    setEditingProduct(null);
     setEditName('');
-    setEditEmail('');
+    setEditPrice('');
+    setEditSku('');
+    setEditQuantity('');
   };
 
   return (
     <SafeAreaView className="flex-1 bg-slate-900">
       <View className="flex-1 px-6 py-8">
         <View className="mb-6">
-          <Text className="text-white text-4xl font-bold mb-2 text-center">Users List</Text>
+          <Text className="text-white text-4xl font-bold mb-2 text-center">Products List</Text>
           <Text className="text-purple-300 text-lg text-center">
-            {users.length} {users.length === 1 ? 'user' : 'users'} registered
+            {products.length} {products.length === 1 ? 'product' : 'products'} registered
           </Text>
         </View>
 
         {loading ? (
           <View className="flex-1 justify-center items-center py-20">
-            <Text className="text-white text-lg">Loading users...</Text>
+            <Text className="text-white text-lg">Loading products...</Text>
           </View>
-        ) : users.length === 0 ? (
+        ) : products.length === 0 ? (
           <View className="flex-1 justify-center items-center py-20">
             <View className="bg-white/10 border border-white/20 rounded-2xl p-8 max-w-sm">
               <Text className="text-white text-xl font-semibold mb-2 text-center">
-                No users yet
+                No products yet
               </Text>
               <Text className="text-gray-400 text-sm text-center mb-6">
-                Start by adding your first user
+                Start by adding your first product
               </Text>
               <Pressable
-                onPress={() => router.push('/add-users')}
+                onPress={() => router.push('/add-products')}
                 className="bg-indigo-500 rounded-xl py-3 px-6"
                 style={({ pressed }) => [
                   {
@@ -126,14 +189,14 @@ export default function ShowUsers() {
                 ]}
               >
                 <Text className="text-white text-base font-semibold text-center">
-                  Add User
+                  Add Product
                 </Text>
               </Pressable>
             </View>
           </View>
         ) : (
           <FlatList
-            data={users}
+            data={products}
             keyExtractor={(item) => item.id}
             showsVerticalScrollIndicator={false}
             contentContainerStyle={{ paddingBottom: 20 }}
@@ -159,7 +222,7 @@ export default function ShowUsers() {
                       {item.name}
                     </Text>
                     <Text className="text-purple-300 text-sm mt-1">
-                      {item.email}
+                      {item.price} USD, Quantity: {item.quantity}
                     </Text>
                   </View>
                   <Pressable
@@ -177,7 +240,7 @@ export default function ShowUsers() {
                 </View>
                 <View className="border-t border-white/10 pt-3">
                   <Text className="text-gray-400 text-xs">
-                    Added: {formatDate(item.createdAt)}
+                    Added: {formatDate(item.createdAt)}, SKU: {item.sku}
                   </Text>
                 </View>
               </View>
@@ -203,7 +266,7 @@ export default function ShowUsers() {
 
         {/* Edit Modal */}
         <Modal
-          visible={editingUser !== null}
+          visible={editingProduct !== null}
           transparent={true}
           animationType="slide"
           onRequestClose={handleCancelEdit}
@@ -211,15 +274,15 @@ export default function ShowUsers() {
           <View className="flex-1 bg-black/50 justify-center items-center px-6">
             <View className="bg-slate-800 rounded-2xl p-6 w-full max-w-sm border border-white/20">
               <Text className="text-white text-2xl font-bold mb-4 text-center">
-                Edit User
+                Edit Product
               </Text>
 
               <View className="mb-4">
                 <Text className="text-white text-sm mb-1">
-                  Name <Text className="text-red-400">*</Text>
+                  Product Name <Text className="text-red-400">*</Text>
                 </Text>
                 <TextInput
-                  placeholder="Name"
+                  placeholder="Product Name"
                   placeholderTextColor="#9ca3af"
                   value={editName}
                   onChangeText={setEditName}
@@ -227,17 +290,43 @@ export default function ShowUsers() {
                 />
               </View>
 
-              <View className="mb-6">
+              <View className="mb-4">
                 <Text className="text-white text-sm mb-1">
-                  Email <Text className="text-red-400">*</Text>
+                  Price <Text className="text-red-400">*</Text>
                 </Text>
                 <TextInput
-                  placeholder="Email"
+                  placeholder="Price (e.g., 19.99)"
                   placeholderTextColor="#9ca3af"
-                  keyboardType="email-address"
-                  autoCapitalize="none"
-                  value={editEmail}
-                  onChangeText={setEditEmail}
+                  keyboardType="decimal-pad"
+                  value={editPrice}
+                  onChangeText={handleEditPriceChange}
+                  className="bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white text-base"
+                />
+              </View>
+
+              <View className="mb-4">
+                <Text className="text-white text-sm mb-1">
+                  SKU <Text className="text-red-400">*</Text>
+                </Text>
+                <TextInput
+                  placeholder="SKU"
+                  placeholderTextColor="#9ca3af"
+                  value={editSku}
+                  onChangeText={setEditSku}
+                  className="bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white text-base"
+                />
+              </View>
+
+              <View className="mb-6">
+                <Text className="text-white text-sm mb-1">
+                  Quantity <Text className="text-red-400">*</Text>
+                </Text>
+                <TextInput
+                  placeholder="Quantity (whole number)"
+                  placeholderTextColor="#9ca3af"
+                  keyboardType="number-pad"
+                  value={editQuantity}
+                  onChangeText={handleEditQuantityChange}
                   className="bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white text-base"
                 />
               </View>

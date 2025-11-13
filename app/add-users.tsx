@@ -55,7 +55,7 @@ export default function AddUsers() {
 
   return (
     <SafeAreaView className="flex-1 bg-slate-900">
-        <Text className="text-white text-sm font-light my-2 text-end px-2 md:px-6 lg:px-12 md:my-4 lg:my-8 hover:text-purple-300 cursor-pointer hover:font-semibold " onPress={() => router.push('/show_users')}>List of Users</Text>
+        <Text className="text-white text-sm font-light my-2 mt-4 text-end px-2 md:px-6 lg:px-12 md:my-4 lg:my-8 hover:text-purple-300 cursor-pointer hover:font-semibold " onPress={() => router.push('/show_users')}>List of Users</Text>
       <View className="flex-1 justify-center items-center px-6 py-12">
         <Pressable onPress={() => router.push('/show_users')}>
         </Pressable>
