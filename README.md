@@ -1,7 +1,7 @@
 # 🚀 Product & User Management App
 
 <div align="center">
-  <img src="./assets/images/welcome.png" alt="Welcome Screen" width="120" height="120">
+  <img src="./assets/images/welcome.png" alt="Welcome Screen" width="200" height="220">
 </div>
 
 A React Native application built with **Expo** and **Tailwind CSS (NativeWind)** for managing products, users, and transactions. This app provides a complete inventory management system with local storage capabilities.
@@ -17,9 +17,8 @@ A React Native application built with **Expo** and **Tailwind CSS (NativeWind)**
 - 📊 **Transaction History** - Track all product transactions
 - 💾 **Local Storage** - Data persistence using AsyncStorage
 - 🎯 **TypeScript** - Full type safety
-- 🧩 **Themed Components** - Support for light/dark mode
 - 🛠 Clean and organized project structure
-- 📱 Supports Android, iOS, and Web
+- 📱 build with react native and tailwindcss (NativeWind)
 
 ---
 
@@ -123,19 +122,19 @@ Then scan the QR code with the Expo Go app on your device, or press the correspo
 
 ### User Management
 - Add new users with name and email
-- View all registered users
+- View all registered users (include editing users)
 - Data stored locally using AsyncStorage
 
 ### Product Management
 - Add products with name, price, SKU, and quantity
-- View all products in a searchable list
+- View all products 
 - Edit product details
 - Adjust product quantities (increase/decrease)
 - Automatic transaction logging
 
 ### Transaction History
 - View all product transactions
-- Filter by transaction type (add, adjust, etc.)
+- Filter by transaction type (add, adjust)
 - See transaction timestamps and details
 
 ---
@@ -150,7 +149,7 @@ Then scan the QR code with the Expo Go app on your device, or press the correspo
 - **AsyncStorage** (^2.2.0) - Local data persistence
 - **React Navigation** (^7.1.6) - Navigation library
 - **React Native Reanimated** (~3.17.4) - Animations
-- **Zod** (^4.1.12) - Schema validation
+
 
 ---
 
