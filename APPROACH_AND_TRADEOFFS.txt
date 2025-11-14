@@ -1,0 +1,35 @@
+Approach:
+I built the app using functional React Native components with forms to register users and products.
+ All data is stored in local state using React hooks (useState, useEffect). I styled the app with NativeWind for a consistent look and applied basic validation to both user and product forms. 
+ To keep the process simple, I also added useful features like editing users and products to make the system more user-friendly and appropriate.
+
+Trade-offs:
+
+✓ PROS:
+
+Zero setup required, works immediately
+
+No network dependency (fully offline)
+
+Simple API, easy to understand and maintain
+
+No server costs or infrastructure needed
+
+Data privacy: all data stays on the device
+
+✗ CONS:
+
+Performance degrades with large datasets (array operations in local state)
+
+No advanced querying capabilities (must load all data to filter or search)
+
+No data relationships or foreign keys
+
+Limited scalability (not ideal for thousands of records)
+
+Risk of data loss if app is uninstalled or reset
+
+No synchronization between devices
+
+Manual transaction logging increases complexity
+

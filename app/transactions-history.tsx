@@ -61,10 +61,26 @@ export default function TransactionsHistory() {
     <SafeAreaView className="flex-1 bg-slate-900">
       <View className="flex-1 px-6 py-8">
         <View className="mb-6">
-          <Text className="text-white text-2xl font-bold mb-2 text-center">Transactions History</Text>
-          <Text className="text-purple-300 text-base text-center">
-            {transactions.length} {transactions.length === 1 ? 'transaction' : 'transactions'} recorded
-          </Text>
+          <View className="flex-row items-center mb-4">
+            <Pressable
+              onPress={() => router.back()}
+              className="mr-4"
+              style={({ pressed }) => [
+                {
+                  opacity: pressed ? 0.6 : 1,
+                },
+              ]}
+            >
+              <MaterialIcons name="arrow-back" size={28} color="#ffffff" />
+            </Pressable>
+            <View className="flex-1">
+              <Text className="text-white text-2xl font-bold mb-2 text-center">Transactions History</Text>
+              <Text className="text-purple-300 text-base text-center">
+                {transactions.length} {transactions.length === 1 ? 'transaction' : 'transactions'} recorded
+              </Text>
+            </View>
+            <View style={{ width: 28 }} />
+          </View>
         </View>
 
         {loading ? (
@@ -135,22 +151,6 @@ export default function TransactionsHistory() {
                 </View>
               </View>
             )}
-            ListFooterComponent={
-              <Pressable
-                onPress={() => router.back()}
-                className="bg-transparent rounded-2xl py-5 px-6 border-2 border-purple-400 mt-6"
-                style={({ pressed }) => [
-                  {
-                    opacity: pressed ? 0.8 : 1,
-                    transform: [{ scale: pressed ? 0.98 : 1 }],
-                  },
-                ]}
-              >
-                <Text className="text-purple-300 text-lg font-semibold text-center">
-                  Go Back
-                </Text>
-              </Pressable>
-            }
           />
         )}
       </View>
