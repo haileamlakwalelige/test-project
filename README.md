@@ -246,16 +246,3 @@ If you encounter module resolution errors:
 ## 📄 License
 
 MIT License — free to use and modify.
-
----
-
-## 🤝 Contributing
-
-Contributions are welcome! Feel free to open issues or submit pull requests.
-
----
-
-## ⭐️ Support
-
-If you find this project helpful, give it a ⭐️ on GitHub!
-
